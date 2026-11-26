@@ -1,0 +1,449 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeBloom | Pengelolaan Waktu</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --pink: #e98bb5;
+  --purple: #a995d9;
+  --dark: #51445f;
+  --bg: #fff7fb;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--dark);
+  padding: 20px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.logo {
+  font-size: 27px;
+  font-weight: 800;
+  color: #d76d9e;
+}
+
+.logo span { color: #a995d9; }
+
+.date {
+  background: white;
+  padding: 12px 18px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px #e9c9dc55;
+  font-size: 13px;
+}
+
+.hero {
+  background: linear-gradient(120deg,#f5b5d2,#c7b7ee);
+  padding: 35px;
+  border-radius: 25px;
+  color: white;
+  margin-bottom: 25px;
+}
+
+.hero h1 { font-size: 30px; }
+.hero p { margin-top: 8px; font-size: 14px; }
+
+.clock {
+  font-size: 35px;
+  font-weight: 700;
+  margin-top: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 22px;
+  padding: 23px;
+  box-shadow: 0 5px 20px #e8cddd55;
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #bd6e9a;
+}
+
+input, button {
+  border: none;
+  outline: none;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+input {
+  background: #fff4f9;
+  width: 100%;
+  margin-bottom: 10px;
+  color: var(--dark);
+}
+
+button {
+  background: var(--pink);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: .2s;
+}
+
+button:hover { opacity: .85; }
+
+.add {
+  width: 100%;
+}
+
+ul { list-style: none; }
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fff5fa;
+  padding: 11px;
+  border-radius: 12px;
+  margin-top: 9px;
+  font-size: 13px;
+}
+
+li.done span {
+  text-decoration: line-through;
+  opacity: .5;
+}
+
+li span { flex: 1; }
+
+.delete {
+  background: #e9a3b6;
+  padding: 7px 10px;
+}
+
+.progress-bg {
+  height: 13px;
+  background: #f4e4ef;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#e98bb5,#ad9ae4);
+  transition: .4s;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.timer {
+  text-align: center;
+}
+
+.timer h3 {
+  font-size: 42px;
+  color: #b18acb;
+  margin: 15px 0;
+}
+
+.timer button { margin: 4px; }
+
+.quote {
+  text-align: center;
+  background: linear-gradient(120deg,#f8d4e5,#e5dafa);
+  border-radius: 20px;
+  padding: 25px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  font-size: 12px;
+  color: #a88ba4;
+}
+
+@media(max-width:650px) {
+  .grid { grid-template-columns: 1fr; }
+  .hero { padding: 25px; }
+  .hero h1 { font-size: 23px; }
+  header { align-items: flex-start; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">🌷 Time<span>Bloom</span></div>
+  <div class="date" id="date"></div>
+</header>
+
+<section class="hero">
+  <h1>Make Today Beautiful! ✨</h1>
+  <p>Atur waktumu, selesaikan tugasmu, dan wujudkan impianmu.</p>
+  <div class="clock" id="clock">00:00:00</div>
+  <p id="greeting">Have a wonderful day!</p>
+</section>
+
+<div class="grid">
+
+<section class="card">
+  <h2>📝 My Daily Tasks</h2>
+  <input id="taskInput" placeholder="Tulis kegiatanmu...">
+  <button class="add" onclick="addTask()">+ Tambah Kegiatan</button>
+  <ul id="taskList"></ul>
+</section>
+
+<section class="card">
+  <h2>📊 Daily Progress</h2>
+  <div class="stats">
+    <span>Total kegiatan</span>
+    <b id="total">0</b>
+  </div>
+  <div class="progress-bg">
+    <div class="progress" id="progress"></div>
+  </div>
+  <div class="stats">
+    <span id="percent">0% selesai</span>
+    <span id="completed">0 selesai</span>
+  </div>
+</section>
+
+<section class="card">
+  <h2>⏰ Add Your Schedule</h2>
+  <input id="scheduleTime" type="time">
+  <input id="scheduleName" placeholder="Nama kegiatan...">
+  <button class="add" onclick="addSchedule()">+ Tambah Jadwal</button>
+  <ul id="scheduleList"></ul>
+</section>
+
+<section class="card timer">
+  <h2>🍅 Focus Time</h2>
+  <p>Waktu untuk fokus dan belajar</p>
+  <h3 id="timer">25:00</h3>
+  <button onclick="startTimer()">Mulai</button>
+  <button onclick="pauseTimer()">Jeda</button>
+  <button onclick="resetTimer()">Ulangi</button>
+</section>
+
+</div>
+
+<section class="quote">
+  🌸 "Small steps every day lead to big achievements."
+  <br><br>
+  Jangan menunda hari ini untuk keberhasilan esok hari!
+</section>
+
+<footer>
+  Made with 💗 by TimeBloom | Manage Your Time, Bloom Your Future
+</footer>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function updateClock() {
+  const now = new Date();
+
+  $('clock').textContent = now.toLocaleTimeString('id-ID');
+  $('date').textContent = now.toLocaleDateString('id-ID',{
+    weekday:'long', day:'numeric',
+    month:'long', year:'numeric'
+  });
+
+  const hour = now.getHours();
+  $('greeting').textContent =
+    hour < 11 ? 'Selamat pagi! Semangat memulai hari 🌷' :
+    hour < 15 ? 'Selamat siang! Tetap produktif ✨' :
+    hour < 18 ? 'Selamat sore! Kamu hebat hari ini 💗' :
+    'Selamat malam! Saatnya beristirahat 🌙';
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// TASK
+let tasks = JSON.parse(localStorage.getItem('tbTasks') || '[]');
+
+function saveTasks() {
+  localStorage.setItem('tbTasks',JSON.stringify(tasks));
+  renderTasks();
+}
+
+function addTask() {
+  const value = $('taskInput').value.trim();
+  if (!value) return alert('Tulis kegiatan terlebih dahulu!');
+  tasks.push({text:value,done:false});
+  $('taskInput').value = '';
+  saveTasks();
+}
+
+function toggleTask(index) {
+  tasks[index].done = !tasks[index].done;
+  saveTasks();
+}
+
+function deleteTask(index) {
+  tasks.splice(index,1);
+  saveTasks();
+}
+
+function renderTasks() {
+  $('taskList').innerHTML = '';
+  tasks.forEach((task,index) => {
+    const li = document.createElement('li');
+    if(task.done) li.classList.add('done');
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.checked = task.done;
+    check.style.width = '18px';
+    check.style.margin = '0';
+    check.addEventListener('change',() => toggleTask(index));
+
+    const span = document.createElement('span');
+    span.textContent = task.text;
+
+    const del = document.createElement('button');
+    del.textContent = '×';
+    del.className = 'delete';
+    del.addEventListener('click',() => deleteTask(index));
+
+    li.append(check,span,del);
+    $('taskList').appendChild(li);
+  });
+
+  const total = tasks.length;
+  const completed = tasks.filter(t => t.done).length;
+  const percent = total ? Math.round(completed/total*100) : 0;
+
+  $('total').textContent = total;
+  $('completed').textContent = completed + ' selesai';
+  $('percent').textContent = percent + '% selesai';
+  $('progress').style.width = percent + '%';
+}
+renderTasks();
+
+// SCHEDULE
+let schedules = JSON.parse(localStorage.getItem('tbSchedules') || '[]');
+
+function saveSchedules() {
+  localStorage.setItem('tbSchedules',JSON.stringify(schedules));
+  renderSchedules();
+}
+
+function addSchedule() {
+  const time = $('scheduleTime').value;
+  const name = $('scheduleName').value.trim();
+
+  if(!time || !name)
+    return alert('Isi waktu dan kegiatan dahulu!');
+
+  schedules.push({time,name});
+  schedules.sort((a,b)=>a.time.localeCompare(b.time));
+  $('scheduleTime').value = '';
+  $('scheduleName').value = '';
+  saveSchedules();
+}
+
+function renderSchedules() {
+  $('scheduleList').innerHTML = '';
+
+  schedules.forEach((item,index) => {
+    const li = document.createElement('li');
+    const span = document.createElement('span');
+    span.textContent = item.time + ' — ' + item.name;
+
+    const del = document.createElement('button');
+    del.textContent = '×';
+    del.className = 'delete';
+    del.addEventListener('click',() => {
+      schedules.splice(index,1);
+      saveSchedules();
+    });
+
+    li.append(span,del);
+    $('scheduleList').appendChild(li);
+  });
+}
+renderSchedules();
+
+// POMODORO TIMER
+let seconds = 25*60;
+let interval = null;
+
+function showTimer() {
+  const min = Math.floor(seconds/60);
+  const sec = seconds%60;
+  $('timer').textContent =
+    String(min).padStart(2,'0') + ':' +
+    String(sec).padStart(2,'0');
+}
+
+function startTimer() {
+  if(interval) return;
+  interval = setInterval(() => {
+    if(seconds > 0) {
+      seconds--;
+      showTimer();
+    } else {
+      clearInterval(interval);
+      interval = null;
+      alert('Waktu fokus selesai! Saatnya istirahat 🌷');
+    }
+  },1000);
+}
+
+function pauseTimer() {
+  clearInterval(interval);
+  interval = null;
+}
+
+function resetTimer() {
+  pauseTimer();
+  seconds = 25*60;
+  showTimer();
+}
+
+showTimer();
+</script>
+</body>
+</html>
